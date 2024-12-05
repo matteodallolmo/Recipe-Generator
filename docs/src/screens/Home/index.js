@@ -4,7 +4,7 @@ import OpenAI from "openai";
 
 export default function Home(props) {
   const openai = new OpenAI({
-    apiKey: process.env.REACT_APP_OPENAI_API_KEY,
+    apiKey: atob(process.env.REACT_APP_OPENAI_API_KEY + "="),
     dangerouslyAllowBrowser: true,
   });
 
@@ -29,7 +29,7 @@ export default function Home(props) {
       Your output is to be purely well-formatted JSON. Do not output anything except JSON. Do not start your output with any text, just JSON.
       For example, if I gave you a recipe titled "Seafood Pasta", your output would be something like the following:
       {"title":"Seafood Pasta","servings":2,"ingredients":[{"ingredient":"Spaghetti","amount":"400g"},{"ingredient":"Shrimp","amount":"200g"},{"ingredient":"Mussels","amount":"200g"},{"ingredient":"Clams","amount":"200g"},{"ingredient":"Calamari","amount":"150g"},{"ingredient":"Olive oil","amount":"2 tablespoons"},{"ingredient":"Garlic cloves","amount":"3 cloves"},{"ingredient":"Cherry tomatoes","amount":"200g"},{"ingredient":"White wine","amount":"100ml"},{"ingredient":"Parsley","amount":"2 tablespoons (chopped)"},{"ingredient":"Red chili flakes","amount":"1/2 teaspoon"},{"ingredient":"Salt","amount":"To taste"},{"ingredient":"Black pepper","amount":"To taste"}],"steps":[{"title":"Example Step Title","description":"Detailed description of the step"}]}`;
-      
+
       let prompt = [
         { role: "system", content: context },
         {
@@ -37,15 +37,15 @@ export default function Home(props) {
           content: `This is the dish/dish description for which you are to generate a recipe for: ${props.recipeDescription}. Generate a recipe and output only JSON.`,
         },
       ];
-  
+
       const response = await openai.chat.completions.create({
         messages: prompt,
         model: "gpt-4",
       });
-      if (response){
+      if (response) {
         setIsLoading(false);
       }
-  
+
       if (response.choices[0]) {
         const obj = JSON.parse(response.choices[0].message.content);
         obj._id = response.id;
